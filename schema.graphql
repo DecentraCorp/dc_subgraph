@@ -1,6 +1,27 @@
-type ExampleEntity @entity {
+type Account @entity {
   id: ID!
-  count: BigInt!
-  target: Bytes! # address
-  call_data: Bytes! # bytes
+  dScore: DScore @derivedFrom(field: "address")
+}
+
+type DScore @entity {
+  id: ID!
+  address: Bytes!
+  level: BigInt
+  jobs: BigInt
+  votes: BigInt
+  reputation: BigInt
+  staked: BigInt
+  verified: BigInt
+  audit: BigInt
+}
+
+type Proposal @entity {
+  id: ID!
+  maker: Account
+  target: Bytes
+  timeCreated: BigInt
+  executed: Boolean
+  proposalPassed: Boolean
+  proposalHash: String
+  callData: Bytes
 }
