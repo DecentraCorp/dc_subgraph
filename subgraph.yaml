@@ -1,0 +1,138 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: DecentraCore
+    network: kovan
+    source:
+      address: "0x2BbeF6aC3Cc291aA3bA7116a6509A3990f46e010"
+      abi: DecentraCore
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - FunctionCallDelegated
+        - NewProposal
+        - NewVote
+        - OwnershipTransferred
+        - ProposalApproved
+      abis:
+        - name: DecentraCore
+          file: ./abis/DecentraCore.json
+      eventHandlers:
+        - event: FunctionCallDelegated(address,bytes)
+          handler: handleFunctionCallDelegated
+        - event: NewProposal(uint256,uint256,address,bytes)
+          handler: handleNewProposal
+        - event: NewVote(uint256,address,bool)
+          handler: handleNewVote
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: ProposalApproved(uint256,bool)
+          handler: handleProposalApproved
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: DecentraBank
+    network: kovan
+    source:
+      address: "0x9837F2d66503CF2D283Eb5189c3dD744781da317"
+      abi: DecentraBank
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - StockPurchased
+        - StockSold
+        - FundWithdrawl
+        - NewCollateral
+      abis:
+        - name: DecentraBank
+          file: ./abis/DecentraBank.json
+      eventHandlers:
+        - event: StockPurchased(uint256,uint256,address)
+          handler: handleStockPurchased
+        - event: StockSold(uint256,uint256,uint256,address)
+          handler: handleStockSold
+        - event: FundWithdrawl(uint256,address)
+          handler: handleFundWithdrawl
+        - event: NewCollateral(address)
+          handler: handleNewCollateral
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: DecentraDollar
+    network: kovan
+    source:
+      address: "0x3d6633369e4D07304aa27ffdb653E221ed25f918"
+      abi: DecentraDollar
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - DD_Mined
+        - DD_Burned
+        - Transfer
+      abis:
+        - name: DecentraDollar
+          file: ./abis/DecentraDollar.json
+      eventHandlers:
+        - event: DD_Mined(address,uint256)
+          handler: handleDD_Mined
+        - event: DD_Burned(address,uint256)
+          handler: handleDD_Burned
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: DecentraStock
+    network: kovan
+    source:
+      address: "0xB5cb4ec3ec818Bd7F40c9CACE96f70f47bbbFB62"
+      abi: DecentraStock
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - StockIssued
+        - Transfer
+      abis:
+        - name: DecentraStock
+          file: ./abis/DecentraStock.json
+      eventHandlers:
+        - event: StockIssued(address,uint256)
+          handler: handleStockIssued
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: DScore
+    network: kovan
+    source:
+      address: "0x24aa949Fe2445e4F3bb6f2072c1c44FeD45c89E0"
+      abi: DScore
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - MembershipStaked
+        - DScoreIncreased
+        - DScoreDecreased
+        - Memberfrozen
+      abis:
+        - name: DScore
+          file: ./abis/DScore.json
+      eventHandlers:
+        - event: MembershipStaked(address,uint256)
+          handler: handleMembershipStaked
+        - event: DScoreIncreased(address,uint256,uint256)
+          handler: handleDScoreIncreased
+        - event: DScoreDecreased(address,uint256,uint256)
+          handler: handleDScoreDecreased
+        - event: Memberfrozen(address,uint256)
+          handler: handleMemberfrozen
+      file: ./src/mapping.ts

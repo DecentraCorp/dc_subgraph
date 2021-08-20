@@ -1,9 +1,16 @@
 {
-  "name": "dc_subgraph",
-  "version": "1.0.0",
-  "description": "Subgraph for the DecentraCorp smart-contract set",
-  "main": "index.js",
-  "repository": "https://github.com/DecentraCorp/dc_subgraph.git",
-  "author": "Christopher Dixon <cryptogrow36@gmail.com>",
-  "license": "MIT"
+  "name": "decentracorp---kovan",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ decentracorp---kovan",
+    "create-local": "graph create --node http://localhost:8020/ decentracorp---kovan",
+    "remove-local": "graph remove --node http://localhost:8020/ decentracorp---kovan",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 decentracorp---kovan"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.21.1",
+    "@graphprotocol/graph-ts": "0.20.0"
+  }
 }
