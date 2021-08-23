@@ -32,6 +32,28 @@ export class FunctionCallDelegated__Params {
   }
 }
 
+export class NewApprovedContract extends ethereum.Event {
+  get params(): NewApprovedContract__Params {
+    return new NewApprovedContract__Params(this);
+  }
+}
+
+export class NewApprovedContract__Params {
+  _event: NewApprovedContract;
+
+  constructor(event: NewApprovedContract) {
+    this._event = event;
+  }
+
+  get contractAdd(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get privledge(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
 export class NewProposal extends ethereum.Event {
   get params(): NewProposal__Params {
     return new NewProposal__Params(this);
@@ -49,16 +71,20 @@ export class NewProposal__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get proposalAmount(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get creator(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 
   get target(): Address {
     return this._event.parameters[2].value.toAddress();
   }
 
+  get propHash(): string {
+    return this._event.parameters[3].value.toString();
+  }
+
   get call_data(): Bytes {
-    return this._event.parameters[3].value.toBytes();
+    return this._event.parameters[4].value.toBytes();
   }
 }
 
@@ -566,36 +592,6 @@ export class ConstructorCall__Outputs {
   }
 }
 
-export class FreezeMemberCall extends ethereum.Call {
-  get inputs(): FreezeMemberCall__Inputs {
-    return new FreezeMemberCall__Inputs(this);
-  }
-
-  get outputs(): FreezeMemberCall__Outputs {
-    return new FreezeMemberCall__Outputs(this);
-  }
-}
-
-export class FreezeMemberCall__Inputs {
-  _call: FreezeMemberCall;
-
-  constructor(call: FreezeMemberCall) {
-    this._call = call;
-  }
-
-  get _member(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class FreezeMemberCall__Outputs {
-  _call: FreezeMemberCall;
-
-  constructor(call: FreezeMemberCall) {
-    this._call = call;
-  }
-}
-
 export class NewProposalCall extends ethereum.Call {
   get inputs(): NewProposalCall__Inputs {
     return new NewProposalCall__Inputs(this);
@@ -631,10 +627,6 @@ export class NewProposalCall__Outputs {
 
   constructor(call: NewProposalCall) {
     this._call = call;
-  }
-
-  get value0(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
   }
 }
 

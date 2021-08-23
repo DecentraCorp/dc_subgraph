@@ -12,7 +12,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class ExampleEntity extends Entity {
+export class Account extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -20,17 +20,17 @@ export class ExampleEntity extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save ExampleEntity entity without an ID");
+    assert(id !== null, "Cannot save Account entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save ExampleEntity entity with non-string ID. " +
+      "Cannot save Account entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("ExampleEntity", id.toString(), this);
+    store.set("Account", id.toString(), this);
   }
 
-  static load(id: string): ExampleEntity | null {
-    return store.get("ExampleEntity", id) as ExampleEntity | null;
+  static load(id: string): Account | null {
+    return store.get("Account", id) as Account | null;
   }
 
   get id(): string {
@@ -42,30 +42,230 @@ export class ExampleEntity extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get count(): BigInt {
-    let value = this.get("count");
+  get proposals(): Array<string> | null {
+    let value = this.get("proposals");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set proposals(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("proposals");
+    } else {
+      this.set("proposals", Value.fromStringArray(value as Array<string>));
+    }
+  }
+
+  get votes(): Array<string> | null {
+    let value = this.get("votes");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set votes(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("votes");
+    } else {
+      this.set("votes", Value.fromStringArray(value as Array<string>));
+    }
+  }
+}
+
+export class Proposal extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Proposal entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Proposal entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Proposal", id.toString(), this);
+  }
+
+  static load(id: string): Proposal | null {
+    return store.get("Proposal", id) as Proposal | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get creator(): string {
+    let value = this.get("creator");
+    return value.toString();
+  }
+
+  set creator(value: string) {
+    this.set("creator", Value.fromString(value));
+  }
+
+  get target(): Bytes | null {
+    let value = this.get("target");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set target(value: Bytes | null) {
+    if (value === null) {
+      this.unset("target");
+    } else {
+      this.set("target", Value.fromBytes(value as Bytes));
+    }
+  }
+
+  get timeCreated(): BigInt {
+    let value = this.get("timeCreated");
     return value.toBigInt();
   }
 
-  set count(value: BigInt) {
-    this.set("count", Value.fromBigInt(value));
+  set timeCreated(value: BigInt) {
+    this.set("timeCreated", Value.fromBigInt(value));
   }
 
-  get target(): Bytes {
-    let value = this.get("target");
-    return value.toBytes();
+  get executed(): boolean {
+    let value = this.get("executed");
+    return value.toBoolean();
   }
 
-  set target(value: Bytes) {
-    this.set("target", Value.fromBytes(value));
+  set executed(value: boolean) {
+    this.set("executed", Value.fromBoolean(value));
   }
 
-  get call_data(): Bytes {
-    let value = this.get("call_data");
-    return value.toBytes();
+  get proposalPassed(): boolean {
+    let value = this.get("proposalPassed");
+    return value.toBoolean();
   }
 
-  set call_data(value: Bytes) {
-    this.set("call_data", Value.fromBytes(value));
+  set proposalPassed(value: boolean) {
+    this.set("proposalPassed", Value.fromBoolean(value));
+  }
+
+  get proposalHash(): string | null {
+    let value = this.get("proposalHash");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set proposalHash(value: string | null) {
+    if (value === null) {
+      this.unset("proposalHash");
+    } else {
+      this.set("proposalHash", Value.fromString(value as string));
+    }
+  }
+
+  get callData(): Bytes | null {
+    let value = this.get("callData");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set callData(value: Bytes | null) {
+    if (value === null) {
+      this.unset("callData");
+    } else {
+      this.set("callData", Value.fromBytes(value as Bytes));
+    }
+  }
+
+  get votes(): Array<string> | null {
+    let value = this.get("votes");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set votes(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("votes");
+    } else {
+      this.set("votes", Value.fromStringArray(value as Array<string>));
+    }
+  }
+}
+
+export class Vote extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Vote entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Vote entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Vote", id.toString(), this);
+  }
+
+  static load(id: string): Vote | null {
+    return store.get("Vote", id) as Vote | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get voter(): string {
+    let value = this.get("voter");
+    return value.toString();
+  }
+
+  set voter(value: string) {
+    this.set("voter", Value.fromString(value));
+  }
+
+  get inFavor(): boolean {
+    let value = this.get("inFavor");
+    return value.toBoolean();
+  }
+
+  set inFavor(value: boolean) {
+    this.set("inFavor", Value.fromBoolean(value));
+  }
+
+  get proposal(): string {
+    let value = this.get("proposal");
+    return value.toString();
+  }
+
+  set proposal(value: string) {
+    this.set("proposal", Value.fromString(value));
   }
 }

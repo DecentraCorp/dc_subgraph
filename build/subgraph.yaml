@@ -1,0 +1,33 @@
+specVersion: 0.0.2
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: DecentraCore
+    network: kovan
+    source:
+      address: "0xfb821d4BD0027E80282F6F16E7550F9Ee8D21645"
+      abi: DecentraCore
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Account
+        - Proposal
+        - Vote
+      abis:
+        - name: DecentraCore
+          file: DecentraCore/abis/DecentraCore.json
+      eventHandlers:
+        - event: FunctionCallDelegated(address,bytes)
+          handler: handleFunctionCallDelegated
+        - event: NewProposal(uint256,address,address,string,bytes)
+          handler: handleNewProposal
+        - event: NewVote(uint256,address,bool)
+          handler: handleNewVote
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: ProposalApproved(uint256,bool)
+          handler: handleProposalApproved
+      file: DecentraCore/DecentraCore.wasm

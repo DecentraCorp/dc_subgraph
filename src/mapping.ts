@@ -1,75 +1,60 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
   DecentraCore,
-  FunctionCallDelegated,
   NewProposal,
   NewVote,
-  OwnershipTransferred,
   ProposalApproved
-} from "../generated/DecentraCore/DecentraCore"
-import { ExampleEntity } from "../generated/schema"
+} from "../generated/DecentraCore/DecentraCore";
+import { Account, Proposal, Vote } from "../generated/schema";
 
-export function handleFunctionCallDelegated(
-  event: FunctionCallDelegated
-): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
-
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
-
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+export function handleNewProposal(event: NewProposal): void {
+  let account = Account.load(event.params.creator.toHex());
+  if (account == null) {
+    account = new Account(event.params.creator.toHex());
   }
 
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+  let prop = new Proposal(event.params.proposalId.toHex());
 
-  // Entity fields can be set based on event parameters
-  entity.target = event.params.target
-  entity.call_data = event.params.call_data
+  prop.creator = account.id;
+  prop.target = event.params.target;
+  prop.timeCreated = event.block.timestamp;
+  prop.executed = false;
+  prop.proposalPassed = false;
+  prop.proposalHash = event.params.propHash;
+  prop.callData = event.params.call_data;
 
-  // Entities can be written to the store with `.save()`
-  entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.burners(...)
-  // - contract.dScore(...)
-  // - contract.dScoreMod(...)
-  // - contract.dd(...)
-  // - contract.ds(...)
-  // - contract.freezeFrame(...)
-  // - contract.frozenAccounts(...)
-  // - contract.getProposal(...)
-  // - contract.minters(...)
-  // - contract.owner(...)
-  // - contract.proposalID(...)
-  // - contract.proposalTime(...)
-  // - contract.proposals(...)
-  // - contract.quorum(...)
+  prop.save();
+  account.save();
 }
 
-export function handleNewProposal(event: NewProposal): void {}
+export function handleNewVote(event: NewVote): void {
+  let account = Account.load(event.params.voter.toHex());
+  if (account == null) {
+    account = new Account(event.params.voter.toHex());
+  }
+  let prop = Proposal.load(event.params.proposalId.toHex());
+  let vote = new Vote(
+    event.params.voter.toHex() + " " + event.params.proposalId.toHex()
+  );
 
-export function handleNewVote(event: NewVote): void {}
+  vote.voter = account.id;
+  vote.inFavor = event.params.vote;
+  vote.proposal = prop.id;
 
-export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
+  vote.save();
+  prop.save();
+  account.save();
+}
 
-export function handleProposalApproved(event: ProposalApproved): void {}
+export function handleProposalApproved(event: ProposalApproved): void {
+  let prop = Proposal.load(event.params.proposalId.toHex());
+  prop.executed = true;
+
+  if (event.params.success) {
+    prop.proposalPassed = true;
+  } else {
+    prop.proposalPassed = false;
+  }
+
+  prop.save();
+}
